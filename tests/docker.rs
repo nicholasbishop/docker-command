@@ -73,3 +73,19 @@ fn test_run() {
         "docker run --detach --init --name myName --network myNetwork --read-only --rm --user myUser:myGroup --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
     );
 }
+
+/// Execute "docker run" to test an actual container.
+#[test]
+fn test_real() {
+    let docker = Docker::new();
+    let output = docker
+        .run(RunOpt {
+            image: "alpine:latest".into(),
+            command: Some(new_path("echo")),
+            args: vec!["hello".into(), "world".into()],
+            ..Default::default()
+        })
+        .run()
+        .unwrap();
+    assert_eq!(output.stdout_string_lossy(), "hello world\n");
+}
