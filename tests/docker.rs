@@ -20,6 +20,21 @@ fn test_build() {
 }
 
 #[test]
+fn test_user() {
+    let mut user = User {
+        user: NameOrId::Name("myUser".into()),
+        group: None,
+    };
+    assert_eq!(user.arg(), "myUser");
+
+    user.group = Some(NameOrId::Name("myGroup".into()));
+    assert_eq!(user.arg(), "myUser:myGroup");
+
+    user.user = NameOrId::Id(1000);
+    assert_eq!(user.arg(), "1000:myGroup");
+}
+
+#[test]
 fn test_run() {
     assert_eq!(
         Docker::new()
@@ -31,6 +46,10 @@ fn test_run() {
                 network: Some("myNetwork".into()),
                 read_only: true,
                 remove: true,
+                user: Some(User {
+                    user: NameOrId::Name("myUser".into()),
+                    group: Some(NameOrId::Name("myGroup".into())),
+                }),
                 volumes: vec![
                     // Read-write volume
                     Volume {
@@ -51,6 +70,6 @@ fn test_run() {
                 args: vec!["arg1".into(), "arg2".into()],
             })
             .command_line_lossy(),
-        "docker run --detach --init --name myName --network myNetwork --read-only --rm --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
+        "docker run --detach --init --name myName --network myNetwork --read-only --rm --user myUser:myGroup --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
     );
 }

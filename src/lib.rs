@@ -90,6 +90,11 @@ impl Docker {
             cmd.add_arg("--rm");
         }
 
+        // --user
+        if let Some(user) = &opt.user {
+            cmd.add_arg_pair("--user", user.arg());
+        }
+
         // --volume
         for vol in &opt.volumes {
             cmd.add_arg_pair("--volume", vol.arg());
@@ -130,6 +135,48 @@ pub struct BuildOpt {
     pub tag: Option<String>,
 }
 
+/// Name or numeric ID for a user or group.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum NameOrId {
+    /// Name or the user or group.
+    Name(String),
+
+    /// Numeric ID of the user or group.
+    Id(u32),
+}
+
+impl NameOrId {
+    /// Format as an argument.
+    pub fn arg(&self) -> String {
+        match self {
+            NameOrId::Name(name) => name.clone(),
+            NameOrId::Id(id) => id.to_string(),
+        }
+    }
+}
+
+/// User specification used when running a container.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct User {
+    /// User or UID
+    pub user: NameOrId,
+
+    /// Group or GID
+    pub group: Option<NameOrId>,
+}
+
+impl User {
+    /// Format as an argument.
+    pub fn arg(&self) -> String {
+        let mut out = self.user.arg();
+        if let Some(group) = &self.group {
+            out.push(':');
+            out.push_str(&group.arg());
+        }
+        out
+    }
+}
+
 /// Volume specification used when running a container.
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Volume {
@@ -149,7 +196,8 @@ pub struct Volume {
 }
 
 impl Volume {
-    fn arg(&self) -> OsString {
+    /// Format as an argument.
+    pub fn arg(&self) -> OsString {
         let mut out = OsString::new();
         out.push(&self.src);
         out.push(":");
@@ -186,6 +234,9 @@ pub struct RunOpt {
 
     /// Connect a container to a network.
     pub network: Option<String>,
+
+    /// User (and optionally group) to use inside the container.
+    pub user: Option<User>,
 
     /// Mount the container's root filesystem as read only.
     pub read_only: bool,
