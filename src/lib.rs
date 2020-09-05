@@ -1,3 +1,13 @@
+#![deny(missing_docs)]
+
+//! Create [`Command`]s for running Docker or Docker-compatible clients.
+//!
+//! Rather than speaking directly to the Docker daemon, this library
+//! produces commands that can be run in a subprocess to invoke the
+//! Docker client (or a compatible client such as Podman).
+//!
+//! [`Command`]: https://docs.rs/command-run/latest/command_run/struct.Command.html
+
 use command_run::Command;
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
