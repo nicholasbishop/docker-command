@@ -8,6 +8,8 @@
 //!
 //! [`Command`]: https://docs.rs/command-run/latest/command_run/struct.Command.html
 
+pub use command_run;
+
 use command_run::Command;
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};

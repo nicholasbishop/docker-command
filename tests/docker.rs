@@ -74,18 +74,28 @@ fn test_run() {
     );
 }
 
-/// Execute "docker run" to test an actual container.
+/// Test that tests/example.rs is faithfully reproduced in the readme.
 #[test]
-fn test_real() {
-    let docker = Docker::new();
-    let output = docker
-        .run(RunOpt {
-            image: "alpine:latest".into(),
-            command: Some(new_path("echo")),
-            args: vec!["hello".into(), "world".into()],
-            ..Default::default()
-        })
-        .run()
-        .unwrap();
-    assert_eq!(output.stdout_string_lossy(), "hello world\n");
+fn test_readme_example() {
+    let source = include_str!("../tests/example.rs");
+
+    // Extract the example code between two comments and de-indent
+    let mut example = Vec::new();
+    let mut copy = false;
+    for line in source.lines() {
+        if line.contains("Begin readme example") {
+            copy = true;
+        } else if line.contains("End readme example") {
+            break;
+        } else if copy {
+            // De-indent
+            let line = &line[4..];
+            example.push(line);
+        }
+    }
+    let example = example.join("\n");
+
+    let readme = include_str!("../README.md");
+    dbg!(&example);
+    assert!(readme.contains(&example));
 }
