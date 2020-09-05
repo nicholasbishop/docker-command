@@ -60,15 +60,22 @@ impl Docker {
         let mut cmd = self.command();
         cmd.add_arg("run");
 
+        // --detach
         if opt.detach {
             cmd.add_arg("--detach");
         }
 
+        // --name
         if let Some(name) = &opt.name {
             cmd.add_arg_pair("--name", name);
         }
 
-        // Add volumes
+        // --network
+        if let Some(network) = &opt.network {
+            cmd.add_arg_pair("--network", network);
+        }
+
+        // --volume
         for vol in &opt.volumes {
             cmd.add_arg_pair("--volume", vol.arg());
         }
@@ -157,6 +164,9 @@ pub struct RunOpt {
 
     /// Optional name to give the container.
     pub name: Option<String>,
+
+    /// Connect a container to a network.
+    pub network: Option<String>,
 
     /// Volumes to mount in the container.
     pub volumes: Vec<Volume>,
