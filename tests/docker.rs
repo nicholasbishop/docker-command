@@ -25,6 +25,7 @@ fn test_run() {
         Docker::new()
             .run(RunOpt {
                 image: "myImage".into(),
+                detach: true,
                 name: Some("myName".into()),
                 volumes: vec![
                     // Read-write volume
@@ -46,6 +47,6 @@ fn test_run() {
                 args: vec!["arg1".into(), "arg2".into()],
             })
             .command_line_lossy(),
-        "docker run --name myName --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
+        "docker run --detach --name myName --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
     );
 }

@@ -59,6 +59,11 @@ impl Docker {
     pub fn run(&self, opt: RunOpt) -> Command {
         let mut cmd = self.command();
         cmd.add_arg("run");
+
+        if opt.detach {
+            cmd.add_arg("--detach");
+        }
+
         if let Some(name) = &opt.name {
             cmd.add_arg_pair("--name", name);
         }
@@ -145,6 +150,10 @@ impl Volume {
 pub struct RunOpt {
     /// Container image to run.
     pub image: String,
+
+    /// If true, run the container in the background and print
+    /// container ID. The default is false.
+    pub detach: bool,
 
     /// Optional name to give the container.
     pub name: Option<String>,
