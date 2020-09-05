@@ -11,4 +11,10 @@ client (or a compatible client such as Podman).
 
 This crate depends on the [command-run] crate.
 
+## TODO
+
+Only a few Docker commands are currently implemented, and many of the
+available options for those commands are not yet
+implemented. Contributions welcome!
+
 [command-run]: https://crates.io/crates/command-run
