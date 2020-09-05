@@ -8,3 +8,7 @@ Rust library for creating Docker commands.
 Rather than speaking directly to the Docker daemon, this library
 produces commands that can be run in a subprocess to invoke the Docker
 client (or a compatible client such as Podman).
+
+This crate depends on the [command-run] crate.
+
+[command-run]: https://crates.io/crates/command-run
