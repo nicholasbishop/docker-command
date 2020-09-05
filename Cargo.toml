@@ -3,6 +3,11 @@ name = "docker-command"
 version = "0.1.0"
 authors = ["Nicholas Bishop <nicholasbishop@gmail.com>"]
 edition = "2018"
+repository = "https://github.com/nicholasbishop/docker-command"
+license = "Apache-2.0"
+description = "Library for creating Docker commands"
+readme = "README.md"
+keywords = ["command", "run", "docker", "container", "podman"]
 
 [dependencies]
 command-run = "0.11"
