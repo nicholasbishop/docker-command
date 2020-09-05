@@ -26,8 +26,11 @@ fn test_run() {
             .run(RunOpt {
                 image: "myImage".into(),
                 detach: true,
+                init: true,
                 name: Some("myName".into()),
                 network: Some("myNetwork".into()),
+                read_only: true,
+                remove: true,
                 volumes: vec![
                     // Read-write volume
                     Volume {
@@ -48,6 +51,6 @@ fn test_run() {
                 args: vec!["arg1".into(), "arg2".into()],
             })
             .command_line_lossy(),
-        "docker run --detach --name myName --network myNetwork --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
+        "docker run --detach --init --name myName --network myNetwork --read-only --rm --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
     );
 }

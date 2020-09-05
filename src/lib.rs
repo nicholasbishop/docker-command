@@ -18,7 +18,7 @@ use std::path::{Path, PathBuf};
 /// "podman".
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Docker {
-    /// If true, run the command with `sudo`. The default is false.
+    /// If true, run the command with `sudo`. Defaults to false.
     pub sudo: bool,
 
     /// The container command. The default is "docker", but can be
@@ -65,6 +65,11 @@ impl Docker {
             cmd.add_arg("--detach");
         }
 
+        // --init
+        if opt.init {
+            cmd.add_arg("--init");
+        }
+
         // --name
         if let Some(name) = &opt.name {
             cmd.add_arg_pair("--name", name);
@@ -73,6 +78,16 @@ impl Docker {
         // --network
         if let Some(network) = &opt.network {
             cmd.add_arg_pair("--network", network);
+        }
+
+        // --read-only
+        if opt.read_only {
+            cmd.add_arg("--read-only");
+        }
+
+        // --rm
+        if opt.remove {
+            cmd.add_arg("--rm");
         }
 
         // --volume
@@ -159,14 +174,25 @@ pub struct RunOpt {
     pub image: String,
 
     /// If true, run the container in the background and print
-    /// container ID. The default is false.
+    /// container ID. Defaults to `false`.
     pub detach: bool,
+
+    /// Run an init inside the container that forwards signals and
+    /// reaps processes.
+    pub init: bool,
 
     /// Optional name to give the container.
     pub name: Option<String>,
 
     /// Connect a container to a network.
     pub network: Option<String>,
+
+    /// Mount the container's root filesystem as read only.
+    pub read_only: bool,
+
+    /// If true, automatically remove the container when it
+    /// exits. Defaults to `false`.
+    pub remove: bool,
 
     /// Volumes to mount in the container.
     pub volumes: Vec<Volume>,
