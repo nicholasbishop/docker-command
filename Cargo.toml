@@ -11,3 +11,4 @@ keywords = ["command", "run", "docker", "container", "podman"]
 
 [dependencies]
 command-run = "0.12"
+users = "0.10"

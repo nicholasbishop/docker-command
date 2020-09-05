@@ -166,6 +166,14 @@ pub struct User {
 }
 
 impl User {
+    /// Get a `User` with the current UID and GID set.
+    pub fn current() -> User {
+        User {
+            user: NameOrId::Id(users::get_current_uid()),
+            group: Some(NameOrId::Id(users::get_current_gid())),
+        }
+    }
+
     /// Format as an argument.
     pub fn arg(&self) -> String {
         let mut out = self.user.arg();
