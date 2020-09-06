@@ -13,6 +13,7 @@ fn test_example() -> Result<(), command_run::Error> {
             args: vec!["hello".into(), "world".into()],
             ..Default::default()
         })
+        .enable_capture()
         .run()?;
     assert_eq!(output.stdout_string_lossy(), "hello world\n");
     // End readme example
