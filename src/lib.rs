@@ -92,6 +92,15 @@ impl Docker {
             cmd.add_arg("--detach");
         }
 
+        // --env
+        for (key, value) in &opt.env {
+            let mut arg = OsString::new();
+            arg.push(key);
+            arg.push("=");
+            arg.push(value);
+            cmd.add_arg_pair("--env", arg);
+        }
+
         // --init
         if opt.init {
             cmd.add_arg("--init");
@@ -267,6 +276,9 @@ impl Volume {
 pub struct RunOpt {
     /// Container image to run.
     pub image: String,
+
+    /// Set environment variables.
+    pub env: Vec<(OsString, OsString)>,
 
     /// If true, run the container in the background and print
     /// container ID. Defaults to `false`.

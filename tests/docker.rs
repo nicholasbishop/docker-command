@@ -46,6 +46,8 @@ fn test_run() {
             .run(RunOpt {
                 image: "myImage".into(),
                 detach: true,
+                env: vec![("key1".into(), "val1".into()),
+                          ("key2".into(), "val2".into())],
                 init: true,
                 name: Some("myName".into()),
                 network: Some("myNetwork".into()),
@@ -75,7 +77,7 @@ fn test_run() {
                 args: vec!["arg1".into(), "arg2".into()],
             })
             .command_line_lossy(),
-        "docker run --detach --init --name myName --network myNetwork --read-only --rm --user myUser:myGroup --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
+        "docker run --detach --env key1=val1 --env key2=val2 --init --name myName --network myNetwork --read-only --rm --user myUser:myGroup --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
     );
 }
 
