@@ -1,6 +1,6 @@
 [package]
 name = "docker-command"
-version = "0.6.2-alpha.0"
+version = "0.6.2"
 authors = ["Nicholas Bishop <nicholasbishop@gmail.com>"]
 edition = "2018"
 repository = "https://github.com/nicholasbishop/docker-command"
