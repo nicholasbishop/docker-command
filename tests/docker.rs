@@ -96,6 +96,5 @@ fn test_readme_example() {
     let example = example.join("\n");
 
     let readme = include_str!("../README.md");
-    dbg!(&example);
     assert!(readme.contains(&example));
 }
