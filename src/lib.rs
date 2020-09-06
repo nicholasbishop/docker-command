@@ -11,7 +11,6 @@
 pub use command_run;
 
 use command_run::Command;
-use std::collections::BTreeMap;
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 
@@ -151,7 +150,7 @@ impl Default for Docker {
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct BuildOpt {
     /// Build-time variables.
-    pub build_args: BTreeMap<String, String>,
+    pub build_args: Vec<(String, String)>,
 
     /// Root directory containing files that can be pulled into the
     /// container.
