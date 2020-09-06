@@ -48,15 +48,37 @@ impl Docker {
     pub fn build(&self, opt: BuildOpt) -> Command {
         let mut cmd = self.command();
         cmd.add_arg("build");
-        if let Some(dockerfile) = &opt.dockerfile {
-            cmd.add_arg_pair("--file", dockerfile);
-        }
-        if let Some(tag) = &opt.tag {
-            cmd.add_arg_pair("--tag", tag);
-        }
+
+        // --build-arg
         for (key, value) in opt.build_args {
             cmd.add_arg_pair("--build-arg", format!("{}={}", key, value));
         }
+
+        // --file
+        if let Some(dockerfile) = &opt.dockerfile {
+            cmd.add_arg_pair("--file", dockerfile);
+        }
+
+        // --no-cache
+        if opt.no_cache {
+            cmd.add_arg("--no-cache");
+        }
+
+        // --pull
+        if opt.pull {
+            cmd.add_arg("--pull");
+        }
+
+        // --quiet
+        if opt.quiet {
+            cmd.add_arg("--quiet");
+        }
+
+        // --tag
+        if let Some(tag) = &opt.tag {
+            cmd.add_arg_pair("--tag", tag);
+        }
+
         cmd.add_arg(opt.context);
         cmd
     }
@@ -128,6 +150,9 @@ impl Default for Docker {
 /// Options for building a container.
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct BuildOpt {
+    /// Build-time variables.
+    pub build_args: BTreeMap<String, String>,
+
     /// Root directory containing files that can be pulled into the
     /// container.
     pub context: PathBuf,
@@ -137,11 +162,17 @@ pub struct BuildOpt {
     /// `<context>/Dockerfile` is used.
     pub dockerfile: Option<PathBuf>,
 
+    /// Do not use cache when building the image.
+    pub no_cache: bool,
+
+    /// Always attempt to pull a newer version of the image.
+    pub pull: bool,
+
+    /// Suppress the build output and print image ID on success.
+    pub quiet: bool,
+
     /// If set, the image will be tagged with this name.
     pub tag: Option<String>,
-
-    /// Build-time variables.
-    pub build_args: BTreeMap<String, String>,
 }
 
 /// Name or numeric ID for a user or group.

@@ -14,13 +14,16 @@ fn test_build() {
     assert_eq!(
         Docker::new()
             .build(BuildOpt {
+                build_args,
                 context: new_path("/myContext"),
                 dockerfile: Some(new_path("/myContext/myDockerfile")),
+                no_cache: true,
+                pull: true,
+                quiet: true,
                 tag: Some("myTag".into()),
-                build_args,
             })
             .command_line_lossy(),
-        "docker build --file /myContext/myDockerfile --tag myTag --build-arg barg1=bval1 --build-arg barg2=bval2 /myContext"
+        "docker build --build-arg barg1=bval1 --build-arg barg2=bval2 --file /myContext/myDockerfile --no-cache --pull --quiet --tag myTag /myContext"
     );
 }
 
