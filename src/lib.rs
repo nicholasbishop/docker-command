@@ -11,6 +11,7 @@
 pub use command_run;
 
 use command_run::Command;
+use std::collections::BTreeMap;
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 
@@ -52,6 +53,9 @@ impl Docker {
         }
         if let Some(tag) = &opt.tag {
             cmd.add_arg_pair("--tag", tag);
+        }
+        for (key, value) in opt.build_args {
+            cmd.add_arg_pair("--build-arg", format!("{}={}", key, value));
         }
         cmd.add_arg(opt.context);
         cmd
@@ -135,6 +139,9 @@ pub struct BuildOpt {
 
     /// If set, the image will be tagged with this name.
     pub tag: Option<String>,
+
+    /// Build-time variables.
+    pub build_args: BTreeMap<String, String>,
 }
 
 /// Name or numeric ID for a user or group.

@@ -1,4 +1,5 @@
 use docker_command::*;
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 fn new_path(s: &str) -> PathBuf {
@@ -7,15 +8,19 @@ fn new_path(s: &str) -> PathBuf {
 
 #[test]
 fn test_build() {
+    let mut build_args = BTreeMap::new();
+    build_args.insert("barg1".into(), "bval1".into());
+    build_args.insert("barg2".into(), "bval2".into());
     assert_eq!(
         Docker::new()
             .build(BuildOpt {
                 context: new_path("/myContext"),
                 dockerfile: Some(new_path("/myContext/myDockerfile")),
                 tag: Some("myTag".into()),
+                build_args,
             })
             .command_line_lossy(),
-        "docker build --file /myContext/myDockerfile --tag myTag /myContext"
+        "docker build --file /myContext/myDockerfile --tag myTag --build-arg barg1=bval1 --build-arg barg2=bval2 /myContext"
     );
 }
 
