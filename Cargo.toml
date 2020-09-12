@@ -10,5 +10,5 @@ readme = "README.md"
 keywords = ["command", "run", "docker", "container", "podman"]
 
 [dependencies]
-command-run = "0.12"
+command-run = "0.13"
 users = "0.10"
