@@ -91,6 +91,15 @@ impl Docker {
         cmd
     }
 
+    /// Create a `Command` for removing a network.
+    pub fn remove_network(&self, name: &str) -> Command {
+        let mut cmd = self.command();
+        cmd.add_arg_pair("network", "rm");
+        cmd.add_arg(name);
+
+        cmd
+    }
+
     /// Create a `Command` for running a container.
     pub fn run(&self, opt: RunOpt) -> Command {
         let mut cmd = self.command();

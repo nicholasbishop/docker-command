@@ -37,6 +37,16 @@ fn test_create_network() {
 }
 
 #[test]
+fn test_remove_network() {
+    assert_eq!(
+        Docker::new()
+            .remove_network("myNetwork".into())
+            .command_line_lossy(),
+        "docker network rm myNetwork"
+    );
+}
+
+#[test]
 fn test_user() {
     let mut user = User {
         user: NameOrId::Name("myUser".into()),
