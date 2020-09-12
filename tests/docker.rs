@@ -25,6 +25,18 @@ fn test_build() {
 }
 
 #[test]
+fn test_create_network() {
+    assert_eq!(
+        Docker::new()
+            .create_network(CreateNetworkOpt {
+                name: "myNetwork".into(),
+            })
+            .command_line_lossy(),
+        "docker network create myNetwork"
+    );
+}
+
+#[test]
 fn test_user() {
     let mut user = User {
         user: NameOrId::Name("myUser".into()),

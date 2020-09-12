@@ -82,6 +82,15 @@ impl Docker {
         cmd
     }
 
+    /// Create a `Command` for creating a network.
+    pub fn create_network(&self, opt: CreateNetworkOpt) -> Command {
+        let mut cmd = self.command();
+        cmd.add_arg_pair("network", "create");
+        cmd.add_arg(opt.name);
+
+        cmd
+    }
+
     /// Create a `Command` for running a container.
     pub fn run(&self, opt: RunOpt) -> Command {
         let mut cmd = self.command();
@@ -181,6 +190,13 @@ pub struct BuildOpt {
 
     /// If set, the image will be tagged with this name.
     pub tag: Option<String>,
+}
+
+/// Options for creating a network.
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct CreateNetworkOpt {
+    /// Network name.
+    pub name: String,
 }
 
 /// Name or numeric ID for a user or group.
