@@ -338,3 +338,20 @@ pub struct RunOpt {
     /// Optional arguments to pass to the command.
     pub args: Vec<OsString>,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_command() {
+        let mut docker = Docker::new();
+        assert_eq!(docker.command().command_line_lossy(), "docker");
+
+        docker.sudo = true;
+        assert_eq!(docker.command().command_line_lossy(), "sudo docker");
+
+        docker.program = "myCommand".into();
+        assert_eq!(docker.command().command_line_lossy(), "sudo myCommand");
+    }
+}
