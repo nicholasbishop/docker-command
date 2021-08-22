@@ -15,4 +15,4 @@ logging = ["command-run/logging"]
 
 [dependencies]
 command-run = { version = "1.0", default-features = false }
-users = "0.10"
+users = "0.11"
