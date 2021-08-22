@@ -9,7 +9,9 @@ Rather than speaking directly to the Docker daemon, this library
 produces commands that can be run in a subprocess to invoke the Docker
 client (or a compatible client such as Podman).
 
-This crate depends on the [command-run] crate.
+This crate depends on the [command-run] crate. That crate's `logging`
+feature (which controls whether the `log` crate is a dependency) can be
+toggled with this crate's `logging` feature (enabled by default).
 
 ## Example
 

@@ -9,6 +9,10 @@ description = "Library for creating Docker commands"
 readme = "README.md"
 keywords = ["command", "run", "docker", "container", "podman"]
 
+[features]
+default = ["logging"]
+logging = ["command-run/logging"]
+
 [dependencies]
-command-run = "0.13"
+command-run = { version = "0.13", default-features = false }
 users = "0.10"
