@@ -37,9 +37,9 @@ impl Docker {
     /// Create the base `Command` for running Docker.
     pub fn command(&self) -> Command {
         if self.sudo {
-            Command::with_args("sudo", &["docker"])
+            Command::with_args("sudo", &[&self.program])
         } else {
-            Command::new("docker")
+            Command::new(&self.program)
         }
     }
 
