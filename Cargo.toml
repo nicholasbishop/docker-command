@@ -2,7 +2,7 @@
 name = "docker-command"
 version = "1.0.2-alpha.0"
 authors = ["Nicholas Bishop <nicholasbishop@gmail.com>"]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/nicholasbishop/docker-command"
 license = "Apache-2.0"
 description = "Library for creating Docker commands"
