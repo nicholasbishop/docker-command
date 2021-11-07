@@ -12,6 +12,7 @@ pub use command_run;
 
 use command_run::Command;
 use std::ffi::OsString;
+use std::fmt;
 use std::path::{Path, PathBuf};
 
 /// Base container command used for building and running containers.
@@ -218,12 +219,11 @@ pub enum NameOrId {
     Id(u32),
 }
 
-impl NameOrId {
-    /// Format as an argument.
-    pub fn arg(&self) -> String {
+impl fmt::Display for NameOrId {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            NameOrId::Name(name) => name.clone(),
-            NameOrId::Id(id) => id.to_string(),
+            NameOrId::Name(name) => write!(f, "{}", name),
+            NameOrId::Id(id) => write!(f, "{}", id),
         }
     }
 }
@@ -247,12 +247,13 @@ impl UserAndGroup {
         }
     }
 
-    /// Format as an argument.
+    /// Format as an argument. If `group` is set, the format is
+    /// `<user>:<group>`, otherwise just `<user>`.
     pub fn arg(&self) -> String {
-        let mut out = self.user.arg();
+        let mut out = self.user.to_string();
         if let Some(group) = &self.group {
             out.push(':');
-            out.push_str(&group.arg());
+            out.push_str(&group.to_string());
         }
         out
     }
