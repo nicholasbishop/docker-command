@@ -259,6 +259,14 @@ impl UserAndGroup {
         }
     }
 
+    /// Get a `UserAndGroup` with UID and GID set to zero.
+    pub fn root() -> Self {
+        Self {
+            user: 0.into(),
+            group: Some(0.into()),
+        }
+    }
+
     /// Format as an argument. If `group` is set, the format is
     /// `<user>:<group>`, otherwise just `<user>`.
     pub fn arg(&self) -> String {
