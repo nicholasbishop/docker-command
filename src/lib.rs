@@ -167,7 +167,7 @@ impl Docker {
 
 impl Default for Docker {
     fn default() -> Self {
-        Docker {
+        Self {
             sudo: false,
             program: Path::new("docker").into(),
         }
@@ -222,8 +222,8 @@ pub enum NameOrId {
 impl fmt::Display for NameOrId {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            NameOrId::Name(name) => write!(f, "{}", name),
-            NameOrId::Id(id) => write!(f, "{}", id),
+            Self::Name(name) => write!(f, "{}", name),
+            Self::Id(id) => write!(f, "{}", id),
         }
     }
 }
