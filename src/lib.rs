@@ -35,7 +35,7 @@ impl Docker {
         Self::default()
     }
 
-    /// Create the base `Command` for running Docker.
+    /// Create the base [`Command`] for running Docker.
     pub fn command(&self) -> Command {
         if self.sudo {
             Command::with_args("sudo", &[&self.program])
@@ -44,7 +44,7 @@ impl Docker {
         }
     }
 
-    /// Create a `Command` for building a container.
+    /// Create a [`Command`] for building a container.
     pub fn build(&self, opt: BuildOpt) -> Command {
         let mut cmd = self.command();
         cmd.add_arg("build");
@@ -83,7 +83,7 @@ impl Docker {
         cmd
     }
 
-    /// Create a `Command` for creating a network.
+    /// Create a [`Command`] for creating a network.
     pub fn create_network(&self, opt: CreateNetworkOpt) -> Command {
         let mut cmd = self.command();
         cmd.add_arg_pair("network", "create");
@@ -92,7 +92,7 @@ impl Docker {
         cmd
     }
 
-    /// Create a `Command` for removing a network.
+    /// Create a [`Command`] for removing a network.
     pub fn remove_network(&self, name: &str) -> Command {
         let mut cmd = self.command();
         cmd.add_arg_pair("network", "rm");
@@ -101,7 +101,7 @@ impl Docker {
         cmd
     }
 
-    /// Create a `Command` for running a container.
+    /// Create a [`Command`] for running a container.
     pub fn run(&self, opt: RunOpt) -> Command {
         let mut cmd = self.command();
         cmd.add_arg("run");
@@ -254,8 +254,8 @@ impl UserAndGroup {
     /// Get a `UserAndGroup` with the current UID and GID set.
     pub fn current() -> Self {
         Self {
-            user: NameOrId::Id(users::get_current_uid()),
-            group: Some(NameOrId::Id(users::get_current_gid())),
+            user: users::get_current_uid().into(),
+            group: Some(users::get_current_gid().into()),
         }
     }
 
