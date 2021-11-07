@@ -228,6 +228,18 @@ impl fmt::Display for NameOrId {
     }
 }
 
+impl From<String> for NameOrId {
+    fn from(name: String) -> Self {
+        Self::Name(name)
+    }
+}
+
+impl From<u32> for NameOrId {
+    fn from(id: u32) -> Self {
+        Self::Id(id)
+    }
+}
+
 /// User and (optionally) group.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UserAndGroup {
