@@ -1,12 +1,14 @@
 use docker_command::*;
+use std::error::Error;
 use std::path::Path;
 
 /// Execute "docker run" to test an actual container. This example is
 /// used in the readme.
 #[test]
-fn test_example() -> Result<(), command_run::Error> {
+fn test_example() -> Result<(), Box<dyn Error>> {
     // Begin readme example
-    let output = Docker::new()
+    let output = Docker::auto()
+        .ok_or("container comand not found")?
         .run(RunOpt {
             image: "alpine:latest".into(),
             command: Some(Path::new("echo").into()),

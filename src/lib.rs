@@ -11,9 +11,36 @@
 pub use command_run;
 
 use command_run::Command;
-use std::ffi::OsString;
-use std::fmt;
+use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
+use std::{env, fmt};
+
+// TODO: is there a good existing crate for this? I found a few on
+// crates.io that didn't look quite right.
+fn is_exe_in_path(exe_name: &OsStr) -> bool {
+    let paths = if let Some(paths) = env::var_os("PATH") {
+        paths
+    } else {
+        return false;
+    };
+
+    env::split_paths(&paths).any(|path| path.join(exe_name).exists())
+}
+
+// TODO: consider using nix or some other crate.
+fn is_user_in_group(target_group: &str) -> bool {
+    let mut cmd = Command::new("groups");
+    cmd.log_command = false;
+    cmd.capture = true;
+    cmd.log_output_on_error = true;
+    let output = if let Ok(output) = cmd.run() {
+        output
+    } else {
+        return false;
+    };
+    let stdout = output.stdout_string_lossy();
+    stdout.split_whitespace().any(|group| group == target_group)
+}
 
 /// Base container command used for building and running containers.
 ///
@@ -33,6 +60,39 @@ impl Docker {
     /// Create a new Docker instance with the default values set.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Automatically choose a base command.
+    ///
+    /// * Chooses `podman` if is in the `$PATH`.
+    /// * Otherwise chooses `docker` if it is in the `$PATH`.
+    ///   * If the current user is not in a `docker` group, `sudo` is added.
+    ///
+    /// If neither command is in the `$PATH`, returns `None`.
+    pub fn auto() -> Option<Self> {
+        let docker = OsStr::new("docker");
+        let podman = OsStr::new("podman");
+        if is_exe_in_path(podman) {
+            Some(Self {
+                sudo: false,
+                program: podman.into(),
+            })
+        } else if is_exe_in_path(docker) {
+            let program = docker.into();
+            Some(if is_user_in_group("docker") {
+                Self {
+                    sudo: false,
+                    program,
+                }
+            } else {
+                Self {
+                    sudo: true,
+                    program,
+                }
+            })
+        } else {
+            None
+        }
     }
 
     /// Create the base [`Command`] for running Docker.
