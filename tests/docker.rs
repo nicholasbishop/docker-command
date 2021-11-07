@@ -48,7 +48,7 @@ fn test_remove_network() {
 
 #[test]
 fn test_user() {
-    let mut user = User {
+    let mut user = UserAndGroup {
         user: NameOrId::Name("myUser".into()),
         group: None,
     };
@@ -75,7 +75,7 @@ fn test_run() {
                 network: Some("myNetwork".into()),
                 read_only: true,
                 remove: true,
-                user: Some(User {
+                user: Some(UserAndGroup {
                     user: NameOrId::Name("myUser".into()),
                     group: Some(NameOrId::Name("myGroup".into())),
                 }),
