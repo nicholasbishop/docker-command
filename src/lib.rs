@@ -228,20 +228,20 @@ impl NameOrId {
     }
 }
 
-/// User specification used when running a container.
+/// User and (optionally) group.
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct User {
-    /// User or UID
+pub struct UserAndGroup {
+    /// User or UID.
     pub user: NameOrId,
 
-    /// Group or GID
+    /// Group or GID.
     pub group: Option<NameOrId>,
 }
 
-impl User {
-    /// Get a `User` with the current UID and GID set.
-    pub fn current() -> User {
-        User {
+impl UserAndGroup {
+    /// Get a `UserAndGroup` with the current UID and GID set.
+    pub fn current() -> Self {
+        Self {
             user: NameOrId::Id(users::get_current_uid()),
             group: Some(NameOrId::Id(users::get_current_gid())),
         }
@@ -319,8 +319,8 @@ pub struct RunOpt {
     /// Connect a container to a network.
     pub network: Option<String>,
 
-    /// User (and optionally group) to use inside the container.
-    pub user: Option<User>,
+    /// User (and optionally) group to use inside the container.
+    pub user: Option<UserAndGroup>,
 
     /// Mount the container's root filesystem as read only.
     pub read_only: bool,
