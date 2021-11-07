@@ -16,7 +16,8 @@ toggled with this crate's `logging` feature (enabled by default).
 ## Example
 
 ```rust
-let output = Docker::new()
+let output = Docker::auto()
+    .ok_or("container comand not found")?
     .run(RunOpt {
         image: "alpine:latest".into(),
         command: Some(Path::new("echo").into()),
