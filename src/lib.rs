@@ -12,7 +12,7 @@ pub use command_run;
 
 use command_run::Command;
 use std::ffi::{OsStr, OsString};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::{env, fmt};
 
 /// Preset base commands that a [`Launcher`] can be constructed from.
@@ -61,18 +61,14 @@ fn is_user_in_group(target_group: &str) -> bool {
 /// "podman".
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Launcher {
-    /// If true, run the command with `sudo`. Defaults to false.
-    pub sudo: bool,
-
-    /// The container command. The default is "docker", but can be
-    /// changed to another compatible program such as "podman".
-    pub program: PathBuf,
+    base_command: Command,
 }
 
 impl Launcher {
-    /// Create a new Docker instance with the default values set.
-    pub fn new() -> Self {
-        Self::default()
+    /// Create a new `Launcher` with the specified base [`Command`]. The
+    /// base command is used to create all the other commands.
+    pub fn new(base_command: Command) -> Self {
+        Self { base_command }
     }
 
     /// Automatically choose a base command.
@@ -98,18 +94,14 @@ impl Launcher {
         }
     }
 
-    /// Create the base [`Command`] for running Docker.
-    pub fn command(&self) -> Command {
-        if self.sudo {
-            Command::with_args("sudo", &[&self.program])
-        } else {
-            Command::new(&self.program)
-        }
+    /// Get the base [`Command`].
+    pub fn base_command(&self) -> &Command {
+        &self.base_command
     }
 
     /// Create a [`Command`] for building a container.
     pub fn build(&self, opt: BuildOpt) -> Command {
-        let mut cmd = self.command();
+        let mut cmd = self.base_command.clone();
         cmd.add_arg("build");
 
         // --build-arg
@@ -148,7 +140,7 @@ impl Launcher {
 
     /// Create a [`Command`] for creating a network.
     pub fn create_network(&self, opt: CreateNetworkOpt) -> Command {
-        let mut cmd = self.command();
+        let mut cmd = self.base_command.clone();
         cmd.add_arg_pair("network", "create");
         cmd.add_arg(opt.name);
 
@@ -157,7 +149,7 @@ impl Launcher {
 
     /// Create a [`Command`] for removing a network.
     pub fn remove_network(&self, name: &str) -> Command {
-        let mut cmd = self.command();
+        let mut cmd = self.base_command.clone();
         cmd.add_arg_pair("network", "rm");
         cmd.add_arg(name);
 
@@ -166,7 +158,7 @@ impl Launcher {
 
     /// Create a [`Command`] for running a container.
     pub fn run(&self, opt: RunOpt) -> Command {
-        let mut cmd = self.command();
+        let mut cmd = self.base_command.clone();
         cmd.add_arg("run");
 
         // --detach
@@ -232,28 +224,14 @@ impl From<BaseCommand> for Launcher {
     fn from(bc: BaseCommand) -> Launcher {
         let docker = "docker";
         let podman = "podman";
-        match bc {
-            BaseCommand::Docker => Self {
-                sudo: false,
-                program: docker.into(),
-            },
-            BaseCommand::SudoDocker => Self {
-                sudo: true,
-                program: docker.into(),
-            },
-            BaseCommand::Podman => Self {
-                sudo: false,
-                program: podman.into(),
-            },
-        }
-    }
-}
-
-impl Default for Launcher {
-    fn default() -> Self {
         Self {
-            sudo: false,
-            program: Path::new("docker").into(),
+            base_command: match bc {
+                BaseCommand::Docker => Command::new(docker),
+                BaseCommand::SudoDocker => {
+                    Command::with_args("sudo", &[docker])
+                }
+                BaseCommand::Podman => Command::new(podman),
+            },
         }
     }
 }
@@ -442,21 +420,4 @@ pub struct RunOpt {
 
     /// Optional arguments to pass to the command.
     pub args: Vec<OsString>,
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_command() {
-        let mut launcher = Launcher::new();
-        assert_eq!(launcher.command().command_line_lossy(), "docker");
-
-        launcher.sudo = true;
-        assert_eq!(launcher.command().command_line_lossy(), "sudo docker");
-
-        launcher.program = "myCommand".into();
-        assert_eq!(launcher.command().command_line_lossy(), "sudo myCommand");
-    }
 }
