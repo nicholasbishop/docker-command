@@ -6,6 +6,14 @@ fn new_path(s: &str) -> PathBuf {
 }
 
 #[test]
+fn test_is_program() {
+    assert!(Launcher::from(BaseCommand::Docker).is_docker());
+    assert!(Launcher::from(BaseCommand::SudoDocker).is_docker());
+    assert!(!Launcher::from(BaseCommand::Podman).is_docker());
+    assert!(Launcher::from(BaseCommand::Podman).is_podman());
+}
+
+#[test]
 fn test_build() {
     assert_eq!(
         Launcher::from(BaseCommand::Docker)

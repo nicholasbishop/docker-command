@@ -94,22 +94,27 @@ impl Launcher {
         }
     }
 
+    /// Whether the base command appears to be the given `program`. This
+    /// checks if base command's program or any arguments match the
+    /// input `program`.
+    fn is_program(&self, program: &str) -> bool {
+        let program = OsStr::new(program);
+        self.base_command.program == program
+            || self.base_command.args.contains(&program.into())
+    }
+
     /// Whether the base command appears to be docker. This checks if
     /// the program or any of the arguments in the base command match
     /// "docker".
     pub fn is_docker(&self) -> bool {
-        let docker = OsStr::new("docker");
-        self.base_command.program == docker
-            || self.base_command.args.contains(&docker.into())
+        self.is_program("docker")
     }
 
     /// Whether the base command appears to be podman. This checks if
     /// the program or any of the arguments in the base command match
     /// "podman".
     pub fn is_podman(&self) -> bool {
-        let docker = OsStr::new("docker");
-        self.base_command.program == docker
-            || self.base_command.args.contains(&docker.into())
+        self.is_program("podman")
     }
 
     /// Get the base [`Command`].
