@@ -14,5 +14,5 @@ default = ["logging"]
 logging = ["command-run/logging", "users/logging"]
 
 [dependencies]
-command-run = { version = "1.0.3", default-features = false }
+command-run = { version = "1.1.0", default-features = false }
 users = { version = "0.11.0", default-features = false }
