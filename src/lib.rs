@@ -15,6 +15,19 @@ use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
 use std::{env, fmt};
 
+/// Preset base commands that a [`Launcher`] can be constructed from.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum BaseCommand {
+    /// Docker without sudo.
+    Docker,
+
+    /// Docker with sudo.
+    SudoDocker,
+
+    /// Podman.
+    Podman,
+}
+
 // TODO: is there a good existing crate for this? I found a few on
 // crates.io that didn't look quite right.
 fn is_exe_in_path(exe_name: &OsStr) -> bool {
@@ -73,22 +86,12 @@ impl Launcher {
         let docker = OsStr::new("docker");
         let podman = OsStr::new("podman");
         if is_exe_in_path(podman) {
-            Some(Self {
-                sudo: false,
-                program: podman.into(),
-            })
+            Some(BaseCommand::Podman.into())
         } else if is_exe_in_path(docker) {
-            let program = docker.into();
             Some(if is_user_in_group("docker") {
-                Self {
-                    sudo: false,
-                    program,
-                }
+                BaseCommand::Docker.into()
             } else {
-                Self {
-                    sudo: true,
-                    program,
-                }
+                BaseCommand::SudoDocker.into()
             })
         } else {
             None
@@ -222,6 +225,27 @@ impl Launcher {
         }
         cmd.add_args(&opt.args);
         cmd
+    }
+}
+
+impl From<BaseCommand> for Launcher {
+    fn from(bc: BaseCommand) -> Launcher {
+        let docker = "docker";
+        let podman = "podman";
+        match bc {
+            BaseCommand::Docker => Self {
+                sudo: false,
+                program: docker.into(),
+            },
+            BaseCommand::SudoDocker => Self {
+                sudo: true,
+                program: docker.into(),
+            },
+            BaseCommand::Podman => Self {
+                sudo: false,
+                program: podman.into(),
+            },
+        }
     }
 }
 
