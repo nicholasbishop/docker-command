@@ -8,7 +8,7 @@ fn new_path(s: &str) -> PathBuf {
 #[test]
 fn test_build() {
     assert_eq!(
-        Docker::new()
+        Launcher::new()
             .build(BuildOpt {
                 build_args: vec![("barg1".into(), "bval1".into()),
                                  ("barg2".into(), "bval2".into())],
@@ -27,7 +27,7 @@ fn test_build() {
 #[test]
 fn test_create_network() {
     assert_eq!(
-        Docker::new()
+        Launcher::new()
             .create_network(CreateNetworkOpt {
                 name: "myNetwork".into(),
             })
@@ -39,7 +39,7 @@ fn test_create_network() {
 #[test]
 fn test_remove_network() {
     assert_eq!(
-        Docker::new()
+        Launcher::new()
             .remove_network("myNetwork".into())
             .command_line_lossy(),
         "docker network rm myNetwork"
@@ -64,7 +64,7 @@ fn test_user() {
 #[test]
 fn test_run() {
     assert_eq!(
-        Docker::new()
+        Launcher::new()
             .run(RunOpt {
                 image: "myImage".into(),
                 detach: true,

@@ -7,7 +7,7 @@ use std::path::Path;
 #[test]
 fn test_example() -> Result<(), Box<dyn Error>> {
     // Begin readme example
-    let output = Docker::auto()
+    let output = Launcher::auto()
         .ok_or("container comand not found")?
         .run(RunOpt {
             image: "alpine:latest".into(),

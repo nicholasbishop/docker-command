@@ -47,7 +47,7 @@ fn is_user_in_group(target_group: &str) -> bool {
 /// This allows variations such as "docker", "sudo docker", and
 /// "podman".
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Docker {
+pub struct Launcher {
     /// If true, run the command with `sudo`. Defaults to false.
     pub sudo: bool,
 
@@ -56,7 +56,7 @@ pub struct Docker {
     pub program: PathBuf,
 }
 
-impl Docker {
+impl Launcher {
     /// Create a new Docker instance with the default values set.
     pub fn new() -> Self {
         Self::default()
@@ -225,7 +225,7 @@ impl Docker {
     }
 }
 
-impl Default for Docker {
+impl Default for Launcher {
     fn default() -> Self {
         Self {
             sudo: false,
@@ -426,13 +426,13 @@ mod tests {
 
     #[test]
     fn test_command() {
-        let mut docker = Docker::new();
-        assert_eq!(docker.command().command_line_lossy(), "docker");
+        let mut launcher = Launcher::new();
+        assert_eq!(launcher.command().command_line_lossy(), "docker");
 
-        docker.sudo = true;
-        assert_eq!(docker.command().command_line_lossy(), "sudo docker");
+        launcher.sudo = true;
+        assert_eq!(launcher.command().command_line_lossy(), "sudo docker");
 
-        docker.program = "myCommand".into();
-        assert_eq!(docker.command().command_line_lossy(), "sudo myCommand");
+        launcher.program = "myCommand".into();
+        assert_eq!(launcher.command().command_line_lossy(), "sudo myCommand");
     }
 }
