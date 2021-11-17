@@ -137,6 +137,11 @@ impl Launcher {
             cmd.add_arg_pair("--file", dockerfile);
         }
 
+        // --iidfile
+        if let Some(iidfile) = &opt.iidfile {
+            cmd.add_arg_pair("--iidfile", iidfile);
+        }
+
         // --no-cache
         if opt.no_cache {
             cmd.add_arg("--no-cache");
@@ -273,6 +278,9 @@ pub struct BuildOpt {
     /// directory. If not set (the default) then
     /// `<context>/Dockerfile` is used.
     pub dockerfile: Option<PathBuf>,
+
+    /// If set, the image ID will be written to this path.
+    pub iidfile: Option<PathBuf>,
 
     /// Do not use cache when building the image.
     pub no_cache: bool,

@@ -22,13 +22,14 @@ fn test_build() {
                                  ("barg2".into(), "bval2".into())],
                 context: new_path("/myContext"),
                 dockerfile: Some(new_path("/myContext/myDockerfile")),
+                iidfile: Some(new_path("/myIidfile")),
                 no_cache: true,
                 pull: true,
                 quiet: true,
                 tag: Some("myTag".into()),
             })
             .command_line_lossy(),
-        "docker build --build-arg barg1=bval1 --build-arg barg2=bval2 --file /myContext/myDockerfile --no-cache --pull --quiet --tag myTag /myContext"
+        "docker build --build-arg barg1=bval1 --build-arg barg2=bval2 --file /myContext/myDockerfile --iidfile /myIidfile --no-cache --pull --quiet --tag myTag /myContext"
     );
 }
 
