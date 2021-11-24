@@ -1,7 +1,6 @@
 [package]
 name = "docker-command"
 version = "3.0.0"
-authors = ["Nicholas Bishop <nicholasbishop@gmail.com>"]
 edition = "2021"
 repository = "https://github.com/nicholasbishop/docker-command"
 license = "Apache-2.0"
