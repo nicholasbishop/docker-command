@@ -80,6 +80,7 @@ fn test_run() {
                 env: vec![("key1".into(), "val1".into()),
                           ("key2".into(), "val2".into())],
                 init: true,
+                interactive: true,
                 name: Some("myName".into()),
                 network: Some("myNetwork".into()),
                 publish: vec![PublishPorts {
@@ -100,6 +101,7 @@ fn test_run() {
                 }],
                 read_only: true,
                 remove: true,
+                tty: true,
                 user: Some(UserAndGroup {
                     user: NameOrId::Name("myUser".into()),
                     group: Some(NameOrId::Name("myGroup".into())),
@@ -124,7 +126,7 @@ fn test_run() {
                 args: vec!["arg1".into(), "arg2".into()],
             })
             .command_line_lossy(),
-        "docker run --detach --env key1=val1 --env key2=val2 --init --name myName --network myNetwork --publish 1.2.3.4:987:5678 --publish 1.2.3.4::5678 --publish 987:5678 --publish 5678 --read-only --rm --user myUser:myGroup --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
+        "docker run --detach --env key1=val1 --env key2=val2 --init --interactive --name myName --network myNetwork --publish 1.2.3.4:987:5678 --publish 1.2.3.4::5678 --publish 987:5678 --publish 5678 --read-only --rm --tty --user myUser:myGroup --volume /mySrc:/myDst:rw --volume /mySrc:/myDst:ro,cached,z myImage myCmd arg1 arg2"
     );
 }
 

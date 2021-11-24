@@ -209,6 +209,11 @@ impl Launcher {
             cmd.add_arg("--init");
         }
 
+        // --interactive
+        if opt.interactive {
+            cmd.add_arg("--interactive");
+        }
+
         // --name
         if let Some(name) = &opt.name {
             cmd.add_arg_pair("--name", name);
@@ -232,6 +237,11 @@ impl Launcher {
         // --rm
         if opt.remove {
             cmd.add_arg("--rm");
+        }
+
+        // --tty
+        if opt.tty {
+            cmd.add_arg("--tty");
         }
 
         // --user
@@ -522,6 +532,9 @@ pub struct RunOpt {
     /// reaps processes.
     pub init: bool,
 
+    /// Keep stdin open even if not attached.
+    pub interactive: bool,
+
     /// Optional name to give the container.
     pub name: Option<String>,
 
@@ -540,6 +553,9 @@ pub struct RunOpt {
     /// If true, automatically remove the container when it
     /// exits. Defaults to `false`.
     pub remove: bool,
+
+    /// Allocate a psuedo-TTY.
+    pub tty: bool,
 
     /// Volumes to mount in the container.
     pub volumes: Vec<Volume>,
