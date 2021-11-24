@@ -128,6 +128,19 @@ fn test_run() {
     );
 }
 
+#[test]
+fn test_stop() {
+    assert_eq!(
+        Launcher::from(BaseCommand::Docker)
+            .stop(StopOpt {
+                containers: vec!["abc".into(), "def".into()],
+                time: Some(123),
+            })
+            .command_line_lossy(),
+        "docker stop --time 123 abc def"
+    );
+}
+
 /// Test that tests/example.rs is faithfully reproduced in the readme.
 #[test]
 fn test_readme_example() {

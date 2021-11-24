@@ -252,6 +252,20 @@ impl Launcher {
         cmd.add_args(&opt.args);
         cmd
     }
+
+    /// Create a [`Command`] for stopping containers.
+    pub fn stop(&self, opt: StopOpt) -> Command {
+        let mut cmd = self.base_command.clone();
+        cmd.add_arg("stop");
+
+        if let Some(time) = opt.time {
+            cmd.add_arg_pair("--time", &time.to_string());
+        }
+
+        cmd.add_args(&opt.containers);
+
+        cmd
+    }
 }
 
 impl From<BaseCommand> for Launcher {
@@ -535,4 +549,15 @@ pub struct RunOpt {
 
     /// Optional arguments to pass to the command.
     pub args: Vec<OsString>,
+}
+
+/// Options for stopping a container.
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct StopOpt {
+    /// Containers to stop, specified as names or IDs.
+    pub containers: Vec<String>,
+
+    /// Seconds to wait for stop before killing the container. If None,
+    /// defaults to 10 seconds.
+    pub time: Option<u32>,
 }
