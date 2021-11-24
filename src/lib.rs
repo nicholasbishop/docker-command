@@ -12,6 +12,7 @@ pub use command_run;
 
 use command_run::Command;
 use std::ffi::{OsStr, OsString};
+use std::ops::RangeInclusive;
 use std::path::PathBuf;
 use std::{env, fmt};
 
@@ -218,6 +219,11 @@ impl Launcher {
             cmd.add_arg_pair("--network", network);
         }
 
+        // --publish
+        for publish in &opt.publish {
+            cmd.add_arg_pair("--publish", publish.arg());
+        }
+
         // --read-only
         if opt.read_only {
             cmd.add_arg("--read-only");
@@ -300,6 +306,81 @@ pub struct BuildOpt {
 pub struct CreateNetworkOpt {
     /// Network name.
     pub name: String,
+}
+
+/// Port or range of ports.
+///
+/// # Examples
+///
+/// Specify a single port:
+///
+/// ```
+/// use docker_command::PortRange;
+/// let port = PortRange::from(123);
+/// assert_eq!(port, PortRange(123..=123));
+/// ```
+///
+/// Specify a port range:
+///
+/// ```
+/// use docker_command::PortRange;
+/// PortRange(123..=567);
+/// ```
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PortRange(pub RangeInclusive<u16>);
+
+impl Default for PortRange {
+    fn default() -> Self {
+        Self(0..=0)
+    }
+}
+
+impl fmt::Display for PortRange {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.0.start() == self.0.end() {
+            write!(f, "{}", self.0.start())
+        } else {
+            write!(f, "{}-{}", self.0.start(), self.0.end())
+        }
+    }
+}
+
+impl From<u16> for PortRange {
+    fn from(port: u16) -> Self {
+        Self(port..=port)
+    }
+}
+
+/// Options for publishing ports from a container to the host.
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct PublishPorts {
+    /// Port or port range in the container to publish.
+    pub container: PortRange,
+
+    /// Port or port range on the host.
+    pub host: Option<PortRange>,
+
+    /// Host IP. If set to `0.0.0.0` or `None`, the port will be bound
+    /// to all IPs on the host.
+    pub ip: Option<String>,
+}
+
+impl PublishPorts {
+    /// Format as an argument.
+    pub fn arg(&self) -> String {
+        match (&self.ip, &self.host) {
+            (Some(ip), Some(host_ports)) => {
+                format!("{}:{}:{}", ip, host_ports, self.container)
+            }
+            (Some(ip), None) => {
+                format!("{}::{}", ip, self.container)
+            }
+            (None, Some(host_ports)) => {
+                format!("{}:{}", host_ports, self.container)
+            }
+            (None, None) => format!("{}", self.container),
+        }
+    }
 }
 
 /// Name or numeric ID for a user or group.
@@ -435,6 +516,9 @@ pub struct RunOpt {
 
     /// User (and optionally) group to use inside the container.
     pub user: Option<UserAndGroup>,
+
+    /// Publish ports from the container to the host.
+    pub publish: Vec<PublishPorts>,
 
     /// Mount the container's root filesystem as read only.
     pub read_only: bool,
