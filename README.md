@@ -1,5 +1,7 @@
 # docker-command
 
+**This tool is no longer under active development. If you are interested in taking over or repurposing the name on crates.io, feel free to contact me: nbishop@nbishop.net**
+
 [![crates.io](https://img.shields.io/crates/v/docker-command.svg)](https://crates.io/crates/docker-command)
 [![Documentation](https://docs.rs/docker-command/badge.svg)](https://docs.rs/docker-command)
 
